@@ -15,15 +15,14 @@ import java.util.Properties;
 
 /**
  * The bidding menu: square, see-through box with a rainbow outline and rainbow text.
- * Open chat and drag it with the left mouse button to move it.
+ * Layout: title, block icon + name, top bid, time. Open chat and drag it with the left mouse button.
  */
 public final class BidHud {
     private BidHud() {}
 
     private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("bidding-menu.properties");
     private static final int BODY = 0x33000000; // mostly see-through
-    private static final int PAD = 8;
-    private static final int ICON = 32;         // item drawn at 2x
+    private static final int PAD = 7;
 
     private static int posX = Integer.MIN_VALUE;
     private static int posY = Integer.MIN_VALUE;
@@ -59,6 +58,12 @@ public final class BidHud {
         }
     }
 
+    /** 00:30 style. */
+    private static String clock(long millis) {
+        long total = (millis + 999) / 1000;
+        return String.format("%02d:%02d", total / 60, total % 60);
+    }
+
     public static void render(class_332 ctx, class_9779 tick) {
         class_310 mc = class_310.method_1551();
         if (!Auction.exists || mc.field_1724 == null || mc.field_1690.field_1842) return;
@@ -67,18 +72,29 @@ public final class BidHud {
         class_1041 win = mc.method_22683();
 
         // --- content ---
+        String title = "Bidding Menu";
         String name = Auction.blockName;
-        String bidLine = "Top bid: " + (Auction.winner == null ? "none yet" : "$" + Auction.format(Auction.topAmount));
-        String winnerLine = "Winner: " + (Auction.winner == null ? "-" : Auction.winner);
-        String timeLine = Auction.running ? "Time left: " + Auction.clock(Auction.remainingMillis()) : "Bidding ended";
+        String bidLine;
+        if (Auction.running) {
+            bidLine = "Top bid: " + (Auction.winner == null
+                    ? "Waiting for a bid"
+                    : "$" + Auction.format(Auction.topAmount) + " - " + Auction.winner);
+        } else {
+            bidLine = Auction.winner == null
+                    ? "No winner"
+                    : "Winner: " + Auction.winner + " - $" + Auction.format(Auction.topAmount);
+        }
+        String timeLine = "Time: " + (Auction.running ? clock(Auction.remainingMillis()) : "ended");
 
-        int width = Math.max(150, Math.max(tr.method_1727(name),
-                Math.max(tr.method_1727(bidLine), Math.max(tr.method_1727(winnerLine), tr.method_1727(timeLine)))) + PAD * 2);
-        int height = PAD + 10 + 4 + ICON + 6 + 3 * 12 + PAD;
+        int textW = Math.max(tr.method_1727(title), Math.max(16 + 4 + tr.method_1727(name),
+                Math.max(tr.method_1727(bidLine), tr.method_1727(timeLine))));
+        int width = Math.max(150, textW + PAD * 2);
+        // title 10 + gap 6 + icon row 16 + gap 6 + bid 10 + gap 4 + time 10
+        int height = PAD + 10 + 6 + 16 + 6 + 10 + 4 + 10 + PAD;
 
         if (posX == Integer.MIN_VALUE) {
-            posX = (win.method_4486() - width) / 2;
-            posY = 30;
+            posX = 8;
+            posY = 40;
         }
 
         // --- dragging (only while chat is open, so the cursor is free) ---
@@ -104,29 +120,24 @@ public final class BidHud {
 
         int x = posX, y = posY;
 
-        // --- box: see-through body + rainbow outline ---
+        // --- box: see-through body + square rainbow outline ---
         ctx.method_25294(x, y, x + width, y + height, BODY);
         Rainbow.border(ctx, x, y, width, height, 2);
 
-        int cx = x + width / 2;
+        int tx = x + PAD;
         int ty = y + PAD;
-        Rainbow.centeredText(ctx, tr, name, cx, ty);
+        Rainbow.text(ctx, tr, title, tx, ty);
 
-        // block image (2x)
-        ty += 10 + 4;
+        // block icon + name
+        ty += 10 + 6;
         if (Auction.stack != null && !Auction.stack.method_7960()) {
-            var m = ctx.method_51448();
-            m.pushMatrix();
-            m.translate(cx - ICON / 2f, ty);
-            m.scale(2f, 2f);
-            ctx.method_51427(Auction.stack, 0, 0);
-            m.popMatrix();
+            ctx.method_51427(Auction.stack, tx, ty);
         }
+        Rainbow.text(ctx, tr, name, tx + 16 + 4, ty + 4);
 
-        ty += ICON + 6;
-        Rainbow.centeredText(ctx, tr, bidLine, cx, ty);
-        Rainbow.centeredText(ctx, tr, winnerLine, cx, ty + 12);
-        Rainbow.centeredText(ctx, tr, timeLine, cx, ty + 24);
+        ty += 16 + 6;
+        Rainbow.text(ctx, tr, bidLine, tx, ty);
+        Rainbow.text(ctx, tr, timeLine, tx, ty + 14);
 
         if (chatOpen) {
             Rainbow.text(ctx, tr, "Drag to move", x, y + height + 3);
