@@ -3,7 +3,7 @@
   "id": "bidding-menu",
   "version": "${version}",
   "name": "Bidding Menu",
-  "description": "Press B to set up a bid: pick a block, time and minimum bid. Bids are read from 'X paid you $N' messages and shown in a draggable rainbow menu.",
+  "description": "Press B to set up a bid: pick a block, time and minimum bid. Bids are read from 'X paid you' chat messages and shown in a draggable rainbow menu.",
   "authors": ["Bidding Menu"],
   "license": "MIT",
   "environment": "client",
