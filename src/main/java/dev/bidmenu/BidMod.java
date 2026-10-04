@@ -29,6 +29,7 @@ public class BidMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        Style.load();
         BidHud.load();
         HudElementRegistry.addLast(class_2960.method_60655("bidding-menu", "main"), BidHud::render);
         ClientTickEvents.END_CLIENT_TICK.register(BidMod::tick);

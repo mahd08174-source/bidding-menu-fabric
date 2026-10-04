@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Setup screen: search the block list, pick one, set the duration (and a minimum bid), then Start bid.
- * Scroll the list with the mouse wheel.
+ * Scroll the list with the mouse wheel. The Style button opens the colour settings.
  */
 public class BidScreen extends class_437 {
     private record Entry(class_1799 stack, String name, String path) {}
@@ -94,6 +94,13 @@ public class BidScreen extends class_437 {
                 .method_46434(left + 126, by, 80, 20).method_46431());
         this.method_37063(class_4185.method_46430(class_2561.method_43470("Close"), b -> closeScreen())
                 .method_46434(left + 212, by, 80, 20).method_46431());
+        this.method_37063(class_4185.method_46430(class_2561.method_43470("Style"), b -> {
+                    // keep what was typed so it is still there when we come back
+                    lastTime = timeField.method_1882().trim();
+                    lastMin = minField.method_1882().trim();
+                    class_310.method_1551().method_1507(new StyleScreen());
+                })
+                .method_46434(left + 298, by, 84, 20).method_46431());
 
         lastQuery = null; // forces the list to be built on the first render
     }
@@ -191,15 +198,15 @@ public class BidScreen extends class_437 {
         scroll = Math.max(0, Math.min(maxScroll(), scroll));
 
         // title + labels
-        Rainbow.text(ctx, tr, "Bidding Menu", left, y0);
-        Rainbow.text(ctx, tr, "Search block", left, fieldY - 12);
-        Rainbow.text(ctx, tr, "Duration (seconds)", left + 196, fieldY - 12);
-        Rainbow.text(ctx, tr, "Min bid", left + 306, fieldY - 12);
+        Style.text(ctx, tr, "Bidding Menu", left, y0);
+        Style.text(ctx, tr, "Search block", left, fieldY - 12);
+        Style.text(ctx, tr, "Duration (seconds)", left + 196, fieldY - 12);
+        Style.text(ctx, tr, "Min bid", left + 306, fieldY - 12);
 
-        // list panel: see-through body, square rainbow outline
+        // list panel: see-through body, square outline
         int listH = ROWS * ROW_H;
         ctx.method_25294(left, listY, left + LIST_W, listY + listH, 0x66000000);
-        Rainbow.border(ctx, left - 2, listY - 2, LIST_W + 4, listH + 4, 1);
+        Style.border(ctx, left - 2, listY - 2, LIST_W + 4, listH + 4, 1);
 
         boolean down = GLFW.glfwGetMouseButton(mc.method_22683().method_4490(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
         boolean clicked = down && !lastDown;
@@ -242,7 +249,7 @@ public class BidScreen extends class_437 {
                 break;
             }
         }
-        Rainbow.text(ctx, tr, pick, left, cy + 14);
+        Style.text(ctx, tr, pick, left, cy + 14);
 
         if (!error.isEmpty()) {
             ctx.method_51433(tr, error, left, cy + 28, 0xFFFF5555, false);

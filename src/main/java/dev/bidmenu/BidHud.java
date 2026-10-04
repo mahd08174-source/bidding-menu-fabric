@@ -14,8 +14,8 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 /**
- * The bidding menu: square, see-through box with a rainbow outline and rainbow text.
- * Layout: title, block icon + name, top bid, time. Open chat and drag it with the left mouse button.
+ * The bidding menu: square, see-through box. Colours come from Style (blue by default, rainbow optional).
+ * Layout: block icon + item name as the title, then top bid and time. Open chat and drag it with the left mouse button.
  */
 public final class BidHud {
     private BidHud() {}
@@ -72,7 +72,6 @@ public final class BidHud {
         class_1041 win = mc.method_22683();
 
         // --- content ---
-        String title = "Bidding Menu";
         String name = Auction.blockName;
         String bidLine;
         if (Auction.running) {
@@ -86,11 +85,11 @@ public final class BidHud {
         }
         String timeLine = "Time: " + (Auction.running ? clock(Auction.remainingMillis()) : "ended");
 
-        int textW = Math.max(tr.method_1727(title), Math.max(16 + 4 + tr.method_1727(name),
-                Math.max(tr.method_1727(bidLine), tr.method_1727(timeLine))));
+        int textW = Math.max(16 + 4 + tr.method_1727(name),
+                Math.max(tr.method_1727(bidLine), tr.method_1727(timeLine)));
         int width = Math.max(150, textW + PAD * 2);
-        // title 10 + gap 6 + icon row 16 + gap 6 + bid 10 + gap 4 + time 10
-        int height = PAD + 10 + 6 + 16 + 6 + 10 + 4 + 10 + PAD;
+        // icon/title row 16 + gap 6 + bid 10 + gap 4 + time 10
+        int height = PAD + 16 + 6 + 10 + 4 + 10 + PAD;
 
         if (posX == Integer.MIN_VALUE) {
             posX = 8;
@@ -120,27 +119,25 @@ public final class BidHud {
 
         int x = posX, y = posY;
 
-        // --- box: see-through body + square rainbow outline ---
+        // --- box: see-through body + square outline in the chosen style ---
         ctx.method_25294(x, y, x + width, y + height, BODY);
-        Rainbow.border(ctx, x, y, width, height, 2);
+        Style.border(ctx, x, y, width, height, 2);
 
         int tx = x + PAD;
         int ty = y + PAD;
-        Rainbow.text(ctx, tr, title, tx, ty);
 
-        // block icon + name
-        ty += 10 + 6;
+        // title row: block icon + item name
         if (Auction.stack != null && !Auction.stack.method_7960()) {
             ctx.method_51427(Auction.stack, tx, ty);
         }
-        Rainbow.text(ctx, tr, name, tx + 16 + 4, ty + 4);
+        Style.text(ctx, tr, name, tx + 16 + 4, ty + 4);
 
         ty += 16 + 6;
-        Rainbow.text(ctx, tr, bidLine, tx, ty);
-        Rainbow.text(ctx, tr, timeLine, tx, ty + 14);
+        Style.text(ctx, tr, bidLine, tx, ty);
+        Style.text(ctx, tr, timeLine, tx, ty + 14);
 
         if (chatOpen) {
-            Rainbow.text(ctx, tr, "Drag to move", x, y + height + 3);
+            Style.text(ctx, tr, "Drag to move", x, y + height + 3);
         }
     }
 }
