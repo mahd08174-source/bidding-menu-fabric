@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "bidding-menu",
+  "version": "${version}",
+  "name": "Bidding Menu",
+  "description": "Press B to set up a bid: pick a block, time and minimum bid. Bids are read from 'X paid you $N' messages and shown in a draggable rainbow menu.",
+  "authors": ["Bidding Menu"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.bidmenu.BidMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
