@@ -74,7 +74,8 @@ public class BidScreen extends class_437 {
         }
         if (!blockText.contains(":")) blockText = "minecraft:" + blockText;
         class_2960 id = class_2960.method_12829(blockText);
-        class_1792 item = id == null ? null : class_7923.field_41178.method_10223(id);
+        // method_63535 = Registry.getValue(Identifier); unknown ids give air, which we reject below
+        class_1792 item = id == null ? null : class_7923.field_41178.method_63535(id);
         class_1799 stack = item == null ? null : new class_1799(item);
         if (stack == null || stack.method_7960()) {
             error = "Unknown block: " + blockField.method_1882().trim();
